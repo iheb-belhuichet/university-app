@@ -1,41 +1,134 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
-
-
-const student={
-  nom:'iheb belhuichet',
-  Email:'ihebbelhuichet@gmail.com',
-  téléphone:'+21656610766',
-  filière:"génie logiciel et systèmes d'information",
-  Année :'2026/2027',
-  Groupe:'GLSI2D',
-  ville:'Moknine',
-  img: 'https://scontent.ftun5-1.fna.fbcdn.net/v/t39.30808-6/805763625_1858076958701160_3499970050518098222_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1080&ctp=s1080x1080&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=ZJo0awbBStMQ7kNvwH_UHAt&_nc_oc=AdoVbuH6mvxdDsgU5okTJ26FFdigF7e6NtCLhZUQXFrpVPjApUDwpKPz2G1F1vKzcRznbQ4ZHLJA7VPn5mqU2sLB&_nc_zt=23&_nc_ht=scontent.ftun5-1.fna&_nc_gid=fdu7PtCkQEBKIt4pOyPY3g&_nc_ss=782a8&oh=00_AQMGxESehBOkEtikuZuWXJGIQJ987WJc3sz3I4sNS5bf8Q&oe=6ACAF6A0'
-
-}
+import img1 from "./assets/iheb.jpg";
+import img2 from "./assets/ka7la.webp";
+import img3 from "./assets/ka7loucha.jpg";
+import image from "./assets/etudiant.avif"
+import { useState } from "react";
+import Header from "./components/Header.jsx";
+import Navbar from "./components/Navbar.jsx";
+import StudentCard from "./components/StudentCard.jsx";
+import Footer from "./components/Footer.jsx";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [students, setStudents] = useState([
+    {
+      id: 1,
+      nom: "Iheb belhuichet",
+      email: "ihebbelhuichet@gmail.com",
+      tel: "+216 56610766",
+      filiere: "Génie logiciel et systèmes d'information",
+      annee: "2026/2027",
+      groupe: "GLSI2B",
+      ville: "Mahdia",
+      image: img1,
+    },
+    {
+      id: 2,
+      nom: "Slim Boubaker",
+      email: "slim.boubaker@example.com",
+      tel: "+216 20 111 222",
+      filiere: "Informatique",
+      annee: "2026/2027",
+      groupe: "GLSI2B",
+      ville: "Mahdia",
+      image: img2,
+    },
+    {
+      id: 3,
+      nom: "Sarra Trabelsi",
+      email: "sarra.trabelsi@example.com",
+      tel: "+216 21 333 444",
+      filiere: "Génie logiciel",
+      annee: "2026/2027",
+      groupe: "GLSI2B",
+      ville: "Sousse",
+      image: img3,
+    },
+  ]);
+
+  const [filtre, setFiltre] = useState("");
+
+  function ajouterEtudiant() {
+    const nouvelEtudiant = {
+      id: Date.now(),
+      nom: "Yassine Ben Salem",
+      email: "yassine.bensalem@gmail.com",
+      tel: "+216 44 444 444",
+      filiere: "Génie logiciel et systèmes d'information",
+      annee: "2026/2027",
+      groupe: "GLSI1",
+      ville: "Sfax",
+      image: image,
+    };
+    setStudents([...students, nouvelEtudiant]);
+  }
+
+  function supprimerEtudiant(id) {
+    setStudents(students.filter((student) => student.id !== id));
+  }
+
+  function modifierNom(id, nouveauNom) {
+    setStudents(
+      students.map((student) =>
+        student.id === id ? { ...student, nom: nouveauNom } : student
+      )
+    );
+  }
+
+  const studentsFiltres = students.filter((student) =>
+    student.filiere.toLowerCase().includes(filtre.toLowerCase())
+  );
 
   return (
-    <div>
-      <h1>Fiche Etudiant</h1>
-      <img src={student.img} alt="" />
-      <p><strong>Nom et prénom : </strong>{student.nom} </p>
-      <p><strong>Email:</strong>{student.Email}</p>
-      <p><strong>téléphone:</strong>{student.téléphone}</p>
-      <p><strong>filière:</strong>{student.filière}</p>
-      <p><strong>Année d'étude:</strong>{student.Année}</p>
-      <p><strong>Groupe:</strong>{student.Groupe}</p>
-      <p><strong>Ville:</strong>{student.ville}</p>
-      <a href="mailto:ihebbelhuichet@gmail.com">
-        <button>contactez</button>
-      </a>
+    <div className="app">
+      <Header />
+      <Navbar />
+
+      <main className="container" id="etudiants">
+        <h2 className="section-title">Liste des étudiants</h2>
+
+        <p className="section-description">
+          Année universitaire 2026/2027 — GLSI 2
+        </p>
+
+        <div className="actions">
+          <button onClick={ajouterEtudiant}>+ Ajouter un étudiant</button>
+
+          <input
+            type="text"
+            placeholder="Filtrer par filière..."
+            value={filtre}
+            onChange={(e) => setFiltre(e.target.value)}
+          />
+        </div>
+
+        <section className="students-list">
+          {studentsFiltres.length === 0 ? (
+            <p>Aucun étudiant trouvé.</p>
+          ) : (
+            studentsFiltres.map((student) => (
+              <StudentCard
+                key={student.id}
+                id={student.id}
+                nom={student.nom}
+                email={student.email}
+                tel={student.tel}
+                filiere={student.filiere}
+                annee={student.annee}
+                groupe={student.groupe}
+                ville={student.ville}
+                image={student.image}
+                onSupprimer={supprimerEtudiant}
+                onModifier={modifierNom}
+              />
+            ))
+          )}
+        </section>
+      </main>
+
+      <Footer />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
